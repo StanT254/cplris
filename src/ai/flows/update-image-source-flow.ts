@@ -1,6 +1,6 @@
 'use server';
 /**
- * @fileOverview A flow to update an image source in a component file.
+ * @fileOverview A flow to update an image source in the inventory file.
  *
  * - updateImageSource - The function that performs the update.
  * - UpdateImageSourceInput - The input type for the flow.
@@ -12,7 +12,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 const UpdateImageSourceInputSchema = z.object({
-  targetId: z.string().describe('The data-ai-id of the image to replace.'),
+  targetId: z.string().describe('The id of the image to replace in the inventory.'),
   newImageUrl: z.string().url().describe('The new URL for the image source.'),
 });
 export type UpdateImageSourceInput = z.infer<typeof UpdateImageSourceInputSchema>;
@@ -22,14 +22,7 @@ const UpdateImageSourceOutputSchema = z.object({
   status: z.string().describe('The status of the operation.'),
 });
 
-// This is a map of target IDs to the files they are located in.
-// In a real application, this might come from a database or a more dynamic source.
-const targetFileMap: Record<string, string> = {
-    'logo': 'src/components/logo.tsx',
-    'product-1': 'src/components/sections/products.tsx',
-    'product-2': 'src/components/sections/products.tsx',
-    'product-3': 'src/components/sections/products.tsx',
-};
+const INVENTORY_FILE_PATH = 'src/data/inventory.ts';
 
 async function getFileContent(filePath: string): Promise<string> {
     const fullPath = path.join(process.cwd(), filePath);
@@ -52,28 +45,24 @@ const updateImageSourceFlow = ai.defineFlow(
     outputSchema: UpdateImageSourceOutputSchema,
   },
   async ({ targetId, newImageUrl }) => {
-    const filePath = targetFileMap[targetId];
-    if (!filePath) {
-      throw new Error(`Invalid target ID: ${targetId}`);
-    }
-
-    const currentContent = await getFileContent(filePath);
+    const inventoryPath = INVENTORY_FILE_PATH;
+    const currentContent = await getFileContent(inventoryPath);
     
-    // This regex is designed to find an Image component with a specific data-ai-id
-    // and capture the part of the string that defines its src attribute.
-    // It handles single or double quotes and multiline component definitions.
-    const regex = new RegExp(`(<Image[^>]*data-ai-id=["']${targetId}["'][^>]*src=)(["'][^"']*["'])`, 's');
+    // This regex looks for an object property (image or avatar or src) 
+    // associated with a specific id, and replaces its value.
+    // It's designed to work for products, testimonials, and the logo.
+    const regex = new RegExp(`(id: ['"]${targetId}['"],\\s*.*?\\s*(?:image|avatar|src):\\s*['"])([^'"]+)(['"])`, 's');
     
     if (!regex.test(currentContent)) {
-        throw new Error(`Could not find an Image component with data-ai-id="${targetId}" in ${filePath}.`);
+        throw new Error(`Could not find an entry with id="${targetId}" in ${inventoryPath}.`);
     }
 
-    const updatedContent = currentContent.replace(regex, `$1"${newImageUrl}"`);
+    const updatedContent = currentContent.replace(regex, `$1${newImageUrl}$3`);
     
-    await setFileContent(filePath, updatedContent);
+    await setFileContent(inventoryPath, updatedContent);
 
     return {
-      filePath,
+      filePath: inventoryPath,
       status: 'success',
     };
   }

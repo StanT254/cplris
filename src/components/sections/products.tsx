@@ -2,39 +2,7 @@ import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-
-const products = [
-  {
-    id: 'product-1',
-    name: 'Startup Branding Kit',
-    type: 'Design Templates (Figma, Canva, PSD)',
-    description: 'A ready-made branding bundle for startups — includes logos, typography, social post templates, and color palettes.',
-    price: 'Coming Soon',
-    cta: 'Learn More',
-    image: 'https://placehold.co/600x400.png',
-    aiHint: 'branding kit'
-  },
-  {
-    id: 'product-2',
-    name: 'Notion Business OS',
-    type: 'Productivity Template (Notion)',
-    description: 'A complete Notion dashboard for solopreneurs and small teams to manage clients, tasks, invoices, and content.',
-    price: 'Coming Soon',
-    cta: 'Learn More',
-    image: 'https://placehold.co/600x400.png',
-    aiHint: 'notion dashboard'
-  },
-  {
-    id: 'product-3',
-    name: 'AI Voiceover App',
-    type: 'Android Mobile App (APK)',
-    description: 'An AI-powered app that converts text to natural-sounding voiceovers — perfect for YouTube, courses, and audiobooks.',
-    price: 'Coming Soon',
-    cta: 'Learn More',
-    image: 'https://placehold.co/600x400.png',
-    aiHint: 'voiceover app'
-  },
-];
+import { products } from '@/data/inventory';
 
 export function ProductsSection() {
   return (
@@ -50,7 +18,7 @@ export function ProductsSection() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product) => (
-            <Card key={product.name} className="flex flex-col overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
+            <Card key={product.id} className="flex flex-col overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
               <CardHeader>
                 <CardTitle className="font-headline">{product.name}</CardTitle>
                 <CardDescription>{product.type}</CardDescription>

@@ -13,12 +13,12 @@ import { Loader2, ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import { generateImage, updateImageSource } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
+import { products, testimonials, site } from '@/data/inventory';
 
 const imageTargets = [
-    { id: 'logo', label: 'Website Logo', prompt: 'A modern, minimalist logo of a north star, symbolizing guidance. Clean lines, deep blue and silver colors.' },
-    { id: 'product-1', label: 'Product: Startup Branding Kit', prompt: 'A professional branding kit for a startup, showcasing a logo, color palette, and typography on various mockups like business cards and social media posts. Modern and clean design.' },
-    { id: 'product-2', label: 'Product: Notion Business OS', prompt: 'An elegant and organized Notion dashboard for a business, showing task management, client lists, and project timelines. Clean, functional, and visually appealing.' },
-    { id: 'product-3', label: 'Product: AI Voiceover App', prompt: 'A sleek smartphone screen displaying an AI voiceover app interface. The design should be modern and intuitive, with audio waveforms and text-to-speech controls visible.' },
+    { id: site.logo.id, label: 'Website Logo', prompt: site.logo.aiHint },
+    ...products.map(p => ({ id: p.id, label: `Product: ${p.name}`, prompt: p.aiHint })),
+    ...testimonials.map(t => ({ id: t.id, label: `Testimonial: ${t.name}`, prompt: t.aiHint })),
 ] as const;
 
 type ImageTargetId = typeof imageTargets[number]['id'];
