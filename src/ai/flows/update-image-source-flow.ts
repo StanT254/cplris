@@ -59,7 +59,10 @@ const updateImageSourceFlow = ai.defineFlow(
 
     const currentContent = await getFileContent(filePath);
     
-    const regex = new RegExp(`(<Image[^>]*data-ai-id="${targetId}"[^>]*src=)("[^"]*")`, 's');
+    // This regex is designed to find an Image component with a specific data-ai-id
+    // and capture the part of the string that defines its src attribute.
+    // It handles single or double quotes and multiline component definitions.
+    const regex = new RegExp(`(<Image[^>]*data-ai-id=["']${targetId}["'][^>]*src=)(["'][^"']*["'])`, 's');
     
     if (!regex.test(currentContent)) {
         throw new Error(`Could not find an Image component with data-ai-id="${targetId}" in ${filePath}.`);
