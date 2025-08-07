@@ -11,7 +11,7 @@ import { z } from 'zod';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-export const UpdateImageSourceInputSchema = z.object({
+const UpdateImageSourceInputSchema = z.object({
   targetId: z.string().describe('The data-ai-id of the image to replace.'),
   newImageUrl: z.string().url().describe('The new URL for the image source.'),
 });
