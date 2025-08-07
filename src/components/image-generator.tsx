@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -48,8 +49,12 @@ export function ImageGenerator() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setImageUrl(null);
+
+    const targetLabel = imageTargets.find(t => t.id === values.target)?.label || '';
+    const fullPrompt = `${targetLabel}: ${values.prompt}`;
+
     try {
-      const result = await generateImage(values.prompt);
+      const result = await generateImage(fullPrompt);
       if (result.imageUrl) {
         setImageUrl(result.imageUrl);
       } else {
@@ -170,7 +175,7 @@ export function ImageGenerator() {
                     </div>
                 ) : imageUrl ? (
                      <div className="aspect-square relative w-full rounded-md overflow-hidden">
-                        <Image src={imageUrl} alt="Generated image" layout="fill" objectFit="contain" />
+                        <Image src={imageUrl} alt="Generated image" fill={true} objectFit="contain" />
                     </div>
                 ) : (
                     <div className="text-center text-muted-foreground p-4">
