@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -16,10 +15,10 @@ import { generateImage, updateImageSource } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 
 const imageTargets = [
-    { id: 'logo', label: 'Website Logo' },
-    { id: 'product-1', label: 'Product: Startup Branding Kit' },
-    { id: 'product-2', label: 'Product: Notion Business OS' },
-    { id: 'product-3', label: 'Product: AI Voiceover App' },
+    { id: 'logo', label: 'Website Logo', prompt: 'A modern, minimalist logo of a north star, symbolizing guidance. Clean lines, deep blue and silver colors.' },
+    { id: 'product-1', label: 'Product: Startup Branding Kit', prompt: 'A professional branding kit for a startup, showcasing a logo, color palette, and typography on various mockups like business cards and social media posts. Modern and clean design.' },
+    { id: 'product-2', label: 'Product: Notion Business OS', prompt: 'An elegant and organized Notion dashboard for a business, showing task management, client lists, and project timelines. Clean, functional, and visually appealing.' },
+    { id: 'product-3', label: 'Product: AI Voiceover App', prompt: 'A sleek smartphone screen displaying an AI voiceover app interface. The design should be modern and intuitive, with audio waveforms and text-to-speech controls visible.' },
 ] as const;
 
 type ImageTargetId = typeof imageTargets[number]['id'];
@@ -28,7 +27,6 @@ const formSchema = z.object({
   target: z.custom<ImageTargetId>((val) => imageTargets.map(t => t.id).includes(val as ImageTargetId), {
     message: 'Please select a target image to replace.',
   }),
-  prompt: z.string().min(1, { message: 'Please enter a prompt.' }),
 });
 
 export function ImageGenerator() {
@@ -39,9 +37,6 @@ export function ImageGenerator() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      prompt: '',
-    },
   });
   
   const selectedTarget = form.watch('target');
@@ -50,11 +45,19 @@ export function ImageGenerator() {
     setIsLoading(true);
     setImageUrl(null);
 
-    const targetLabel = imageTargets.find(t => t.id === values.target)?.label || '';
-    const fullPrompt = `${targetLabel}: ${values.prompt}`;
+    const target = imageTargets.find(t => t.id === values.target);
+    if (!target) {
+        toast({
+            variant: "destructive",
+            title: "Invalid Target",
+            description: "Please select a valid target to generate an image for.",
+        });
+        setIsLoading(false);
+        return;
+    }
 
     try {
-      const result = await generateImage(fullPrompt);
+      const result = await generateImage(target.prompt);
       if (result.imageUrl) {
         setImageUrl(result.imageUrl);
       } else {
@@ -112,12 +115,12 @@ export function ImageGenerator() {
     <Card className="shadow-lg">
       <CardHeader>
         <CardTitle className="font-headline">Generate & Replace Website Images</CardTitle>
-        <CardDescription>Select a target, describe the image you want, and authorize it to update the live site.</CardDescription>
+        <CardDescription>Select a target image, and the AI will generate a new version based on a predefined prompt. Authorize it to update the live site.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
                <FormField
                   control={form.control}
                   name="target"
@@ -140,24 +143,11 @@ export function ImageGenerator() {
                     </FormItem>
                   )}
                 />
-                 <FormField
-                  control={form.control}
-                  name="prompt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Image Description</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="e.g., A majestic lion in a futuristic city" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
             </div>
-            <div className="flex gap-2 justify-end">
+             <div className="flex gap-2 justify-end">
                 <Button 
                     type="submit" 
-                    disabled={isLoading || isAuthorizing}
+                    disabled={isLoading || isAuthorizing || !form.formState.isValid}
                     variant="secondary"
                 >
                 {isLoading ? <><Loader2 className="animate-spin" /> Generating...</> : 'Generate Image'}
@@ -181,7 +171,7 @@ export function ImageGenerator() {
                     <div className="text-center text-muted-foreground p-4">
                         <ImageIcon className="h-12 w-12 mx-auto" />
                         <p className="mt-2 font-semibold">Your generated image will appear here</p>
-                         <p className="text-sm">Select a target and provide a description to start.</p>
+                         <p className="text-sm">Select a target to start.</p>
                     </div>
                 )}
             </div>
