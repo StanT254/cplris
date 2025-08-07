@@ -33,7 +33,11 @@ const targetFileMap: Record<string, string> = {
 
 async function getFileContent(filePath: string): Promise<string> {
     const fullPath = path.join(process.cwd(), filePath);
-    return await fs.readFile(fullPath, 'utf-8');
+    try {
+        return await fs.readFile(fullPath, 'utf-8');
+    } catch (e) {
+        throw new Error(`Could not read file at ${filePath}.`);
+    }
 }
 
 async function setFileContent(filePath: string, content: string): Promise<void> {
@@ -55,7 +59,6 @@ const updateImageSourceFlow = ai.defineFlow(
 
     const currentContent = await getFileContent(filePath);
     
-    // Use a robust regex to find the Image component with the correct data-ai-id and replace its src
     const regex = new RegExp(`(<Image[^>]*data-ai-id="${targetId}"[^>]*src=)("[^"]*")`, 's');
     
     if (!regex.test(currentContent)) {
