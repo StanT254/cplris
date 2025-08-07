@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 
 const products = [
   {
+    id: 'product-1',
     name: 'Startup Branding Kit',
     type: 'Design Templates (Figma, Canva, PSD)',
     description: 'A ready-made branding bundle for startups — includes logos, typography, social post templates, and color palettes.',
@@ -14,6 +15,7 @@ const products = [
     aiHint: 'branding kit'
   },
   {
+    id: 'product-2',
     name: 'Notion Business OS',
     type: 'Productivity Template (Notion)',
     description: 'A complete Notion dashboard for solopreneurs and small teams to manage clients, tasks, invoices, and content.',
@@ -23,6 +25,7 @@ const products = [
     aiHint: 'notion dashboard'
   },
   {
+    id: 'product-3',
     name: 'AI Voiceover App',
     type: 'Android Mobile App (APK)',
     description: 'An AI-powered app that converts text to natural-sounding voiceovers — perfect for YouTube, courses, and audiobooks.',
@@ -60,6 +63,7 @@ export function ProductsSection() {
                   height={400}
                   className="rounded-lg object-cover w-full aspect-[3/2]"
                   data-ai-hint={product.aiHint}
+                  data-ai-id={product.id}
                 />
                 <p className="text-muted-foreground">{product.description}</p>
               </CardContent>
