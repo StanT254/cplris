@@ -1,14 +1,15 @@
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const products = [
   {
     name: 'Startup Branding Kit',
     type: 'Design Templates (Figma, Canva, PSD)',
     description: 'A ready-made branding bundle for startups — includes logos, typography, social post templates, and color palettes.',
-    price: '$19',
-    cta: 'Buy Now on Gumroad',
+    price: 'Coming Soon',
+    cta: 'Learn More',
     image: 'https://placehold.co/600x400.png',
     aiHint: 'branding kit'
   },
@@ -16,8 +17,8 @@ const products = [
     name: 'Notion Business OS',
     type: 'Productivity Template (Notion)',
     description: 'A complete Notion dashboard for solopreneurs and small teams to manage clients, tasks, invoices, and content.',
-    price: '$12',
-    cta: 'Get Template',
+    price: 'Coming Soon',
+    cta: 'Learn More',
     image: 'https://placehold.co/600x400.png',
     aiHint: 'notion dashboard'
   },
@@ -25,8 +26,8 @@ const products = [
     name: 'AI Voiceover App',
     type: 'Android Mobile App (APK)',
     description: 'An AI-powered app that converts text to natural-sounding voiceovers — perfect for YouTube, courses, and audiobooks.',
-    price: 'Free',
-    cta: 'Download App',
+    price: 'Coming Soon',
+    cta: 'Learn More',
     image: 'https://placehold.co/600x400.png',
     aiHint: 'voiceover app'
   },
@@ -63,8 +64,8 @@ export function ProductsSection() {
                 <p className="text-muted-foreground">{product.description}</p>
               </CardContent>
               <CardFooter className="flex justify-between items-center mt-auto pt-4 border-t">
-                <p className="text-2xl font-bold text-primary">{product.price}</p>
-                <Button className="bg-accent text-accent-foreground hover:bg-accent/90">{product.cta}</Button>
+                <Badge variant="secondary" className="text-lg">{product.price}</Badge>
+                <Button disabled className="bg-accent text-accent-foreground hover:bg-accent/90">{product.cta}</Button>
               </CardFooter>
             </Card>
           ))}

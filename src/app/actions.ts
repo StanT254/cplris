@@ -1,6 +1,7 @@
 'use server';
 
 import { productInquiryChatbot } from "@/ai/flows/product-inquiry-chatbot";
+import { generateImageFlow } from '@/ai/flows/generate-image-flow';
 
 export async function askChatbot(inquiry: string) {
   if (!inquiry) {
@@ -12,5 +13,18 @@ export async function askChatbot(inquiry: string) {
   } catch (e) {
     console.error(e);
     return { error: "Sorry, I couldn't process your request. Please try again." };
+  }
+}
+
+export async function generateImage(prompt: string) {
+  if (!prompt) {
+    return { error: 'Please enter a prompt.' };
+  }
+  try {
+    const response = await generateImageFlow(prompt);
+    return { imageUrl: response };
+  } catch (e) {
+    console.error(e);
+    return { error: "Sorry, I couldn't generate the image. Please try again." };
   }
 }

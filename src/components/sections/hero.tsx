@@ -14,7 +14,7 @@ export function HeroSection() {
           </p>
           <div className="space-x-4">
             <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              <Link href="#products">View Our Products</Link>
+              <Link href="/products">View Our Products</Link>
             </Button>
           </div>
         </div>

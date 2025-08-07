@@ -6,11 +6,12 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Menu } from 'lucide-react';
 
 const navLinks = [
-  { href: '#about', label: 'About' },
-  { href: '#products', label: 'Products' },
-  { href: '#features', label: 'How It Works' },
-  { href: '#testimonials', label: 'Testimonials' },
-  { href: '#contact', label: 'Contact' },
+  { href: '/about', label: 'About' },
+  { href: '/products', label: 'Products' },
+  { href: '/how-it-works', label: 'How It Works' },
+  { href: '/testimonials', label: 'Testimonials' },
+  { href: '/image-generator', label: 'Image Generator' },
+  { href: '/contact', label: 'Contact' },
 ];
 
 export function Header() {
@@ -40,8 +41,8 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right">
-              <SheetHeader className="sr-only">
-                <SheetTitle>Menu</SheetTitle>
+              <SheetHeader>
+                <SheetTitle className="sr-only">Menu</SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-6 pt-10">
                 <Link href="/" className="mb-4">
