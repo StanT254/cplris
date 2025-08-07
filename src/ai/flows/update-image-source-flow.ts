@@ -54,10 +54,9 @@ const updateImageSourceTool = ai.defineTool(
     outputSchema: z.string().describe('The updated file content.'),
   },
   async ({ fileContent, targetId, newImageUrl }) => {
-    // Regex to find the Image component with the matching data-ai-id and capture its src attribute.
-    // This is a simplified regex and might need to be more robust for complex cases.
-    const regex = new RegExp(`(<Image[^>]*data-ai-id="${targetId}"[^>]*src=)("[^"]*")([^>]*>)`, 's');
-    
+    // This regex is designed to be more robust and handle attributes over multiple lines.
+    const regex = new RegExp(`(<Image[^>]*data-ai-id="${targetId}"[^>]*src=)(['"])(?:(?!\\2).)*\\2([^>]*>)`, 's');
+
     if (!regex.test(fileContent)) {
         throw new Error(`Could not find an Image component with data-ai-id="${targetId}".`);
     }
