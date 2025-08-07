@@ -41,32 +41,6 @@ async function setFileContent(filePath: string, content: string): Promise<void> 
     await fs.writeFile(fullPath, content, 'utf-8');
 }
 
-
-const updateImageSourceTool = ai.defineTool(
-  {
-    name: 'updateImageSourceInFile',
-    description: 'Updates the src attribute of an Image component with a specific data-ai-id in a given file content.',
-    inputSchema: z.object({
-        fileContent: z.string(),
-        targetId: z.string(),
-        newImageUrl: z.string().url(),
-    }),
-    outputSchema: z.string().describe('The updated file content.'),
-  },
-  async ({ fileContent, targetId, newImageUrl }) => {
-    // This regex is designed to be more robust and handle attributes over multiple lines.
-    const regex = new RegExp(`(<Image[^>]*data-ai-id="${targetId}"[^>]*src=)(['"])(?:(?!\\2).)*\\2([^>]*>)`, 's');
-
-    if (!regex.test(fileContent)) {
-        throw new Error(`Could not find an Image component with data-ai-id="${targetId}".`);
-    }
-
-    const updatedContent = fileContent.replace(regex, `$1"${newImageUrl}"$3`);
-    return updatedContent;
-  }
-);
-
-
 const updateImageSourceFlow = ai.defineFlow(
   {
     name: 'updateImageSourceFlow',
@@ -80,12 +54,15 @@ const updateImageSourceFlow = ai.defineFlow(
     }
 
     const currentContent = await getFileContent(filePath);
+    
+    // Use a robust regex to find the Image component with the correct data-ai-id and replace its src
+    const regex = new RegExp(`(<Image[^>]*data-ai-id="${targetId}"[^>]*src=)("[^"]*")`, 's');
+    
+    if (!regex.test(currentContent)) {
+        throw new Error(`Could not find an Image component with data-ai-id="${targetId}" in ${filePath}.`);
+    }
 
-    const updatedContent = await updateImageSourceTool({
-        fileContent: currentContent,
-        targetId,
-        newImageUrl,
-    });
+    const updatedContent = currentContent.replace(regex, `$1"${newImageUrl}"`);
     
     await setFileContent(filePath, updatedContent);
 
